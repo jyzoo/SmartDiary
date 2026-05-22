@@ -1,32 +1,20 @@
-﻿using Azure;
-using System.ComponentModel.DataAnnotations;
+﻿using Microsoft.AspNetCore.Identity;
 
 namespace SmartDiary.Web.Models
 {
-    public class User
-    {
-        public int Id { get; set; }
+	public class User : IdentityUser
+	{
+		public string? Avatar { get; set; }
 
-        [Required(ErrorMessage = "Имя пользователя обязательно")]
-        [StringLength(100, MinimumLength = 3, ErrorMessage = "Имя должно содержать от 3 до 100 символов")]
-        public string Username { get; set; } = string.Empty;
+		public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 
-        [Required(ErrorMessage = "Email обязателен")]
-        [EmailAddress(ErrorMessage = "Некорректный формат email")]
-        public string Email { get; set; } = string.Empty;
+		public string? Settings { get; set; }
 
-        [Required]
-        public string PasswordHash { get; set; } = string.Empty;
+		// Навигационные свойства
+		public ICollection<Project> Projects { get; set; } = new List<Project>();
 
-        public string? Avatar { get; set; }
+		public ICollection<TodoTask> Tasks { get; set; } = new List<TodoTask>();
 
-        [DataType(DataType.DateTime)]
-        public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
-
-        public string? Settings { get; set; }
-
-        public ICollection<Project> Projects { get; set; } = new List<Project>();
-        public ICollection<Task> Tasks { get; set; } = new List<Task>();
-        public ICollection<Tag> Tags { get; set; } = new List<Tag>();
-    }
+		public ICollection<Tag> Tags { get; set; } = new List<Tag>();
+	}
 }

@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace SmartDiary.Web.Models
 {
-    public class Task
+    public class TodoTask
     {
         public int Id { get; set; }
 
@@ -17,7 +17,7 @@ namespace SmartDiary.Web.Models
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 
         [DataType(DataType.DateTime)]
-        [CustomValidation(typeof(Task), nameof(ValidateDeadline))]
+        [CustomValidation(typeof(TodoTask), nameof(ValidateDeadline))]
         public DateTime? Deadline { get; set; }
 
         [Required]
@@ -30,13 +30,13 @@ namespace SmartDiary.Web.Models
 
         public int? ProjectId { get; set; }
 
-        public int UserId { get; set; }
+        public string? UserId { get; set; }
 
         [ForeignKey(nameof(ProjectId))]
         public Project? Project { get; set; }
 
         [ForeignKey(nameof(UserId))]
-        public User User { get; set; } = null!;
+        public User? User { get; set; }
 
         public ICollection<TaskTag> TaskTags { get; set; } = new List<TaskTag>();
 

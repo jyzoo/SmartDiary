@@ -2,11 +2,34 @@ using Microsoft.EntityFrameworkCore;
 using SmartDiary.Web.Data;
 using SmartDiary.Web.Models;
 using System.Diagnostics;
-using DiaryTask = SmartDiary.Web.Models.Task;
+using DiaryTask = SmartDiary.Web.Models.TodoTask;
+using Microsoft.AspNetCore.Identity;
+using SmartDiary.Web.Models;
+using SmartDiary.Web.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllersWithViews();
+
+builder.Services.AddDbContext<ApplicationDbContext>(options =>
+	options.UseSqlServer(
+		builder.Configuration.GetConnectionString("DefaultConnection")));
+
+builder.Services.AddIdentity<User, IdentityRole>(options =>
+{
+	options.Password.RequireDigit = true;
+	options.Password.RequiredLength = 6;
+	options.Password.RequireUppercase = true;
+	options.Password.RequireLowercase = true;
+	options.Password.RequireNonAlphanumeric = false;
+
+	options.User.RequireUniqueEmail = true;
+})
+
+.AddEntityFrameworkStores<ApplicationDbContext>()
+.AddDefaultTokenProviders();
+
+builder.Services.AddScoped<ITaskService, TaskService>();
 
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
@@ -26,19 +49,22 @@ app.UseStaticFiles();
 
 app.UseRouting();
 
+app.UseAuthentication();
+
 app.UseAuthorization();
 
 app.MapControllerRoute(
     name: "default",
-    pattern: "{controller=Home}/{action=Index}/{id?}");
+    pattern: "{controller=Task}/{action=Index}/{id?}");
 
-app.Run();
+SeedData(app.Services);
 
 static void SeedData(IServiceProvider serviceProvider)
 {
     using var scope = serviceProvider.CreateScope();
 
-    var context = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+    var context =
+        scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
 
     context.Database.Migrate();
 
@@ -49,16 +75,18 @@ static void SeedData(IServiceProvider serviceProvider)
 
     var user = new User
     {
-        Username = "testuser",
+        UserName = "testuser",
         Email = "test@example.com",
-        PasswordHash = "test-password-hash",
-        Settings = "{\"theme\":\"light\",\"notifications\":true}"
+        PasswordHash = "test-password-hash"
     };
 
     context.Users.Add(user);
+
     context.SaveChanges();
 
-    var projects = new[]
+
+
+var projects = new[]
     {
         new Project
         {
@@ -159,3 +187,4 @@ static void SeedData(IServiceProvider serviceProvider)
     context.TaskTags.AddRange(taskTags);
     context.SaveChanges();
 }
+app.Run();

@@ -20,11 +20,11 @@ namespace SmartDiary.Web.Models
         [DataType(DataType.DateTime)]
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 
-        public int OwnerId { get; set; }
+		public string OwnerId { get; set; }
 
-        [ForeignKey(nameof(OwnerId))]
+		[ForeignKey(nameof(OwnerId))]
         public User Owner { get; set; } = null!;
 
-        public ICollection<Task> Tasks { get; set; } = new List<Task>();
+        public ICollection<TodoTask> Tasks { get; set; } = new List<TodoTask>();
     }
 }

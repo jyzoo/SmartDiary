@@ -10,9 +10,9 @@ namespace SmartDiary.Web.Models
         [StringLength(50, ErrorMessage = "Название тега не может превышать 50 символов")]
         public string Name { get; set; } = string.Empty;
 
-        public int OwnerId { get; set; }
+		public string OwnerId { get; set; }
 
-        public User Owner { get; set; } = null!;
+		public User Owner { get; set; } = null!;
 
         public ICollection<TaskTag> TaskTags { get; set; } = new List<TaskTag>();
     }

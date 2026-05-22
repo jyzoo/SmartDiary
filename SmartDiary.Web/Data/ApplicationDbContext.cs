@@ -1,11 +1,13 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 using SmartDiary.Web.Models;
-using DiaryTask = SmartDiary.Web.Models.Task;
+using DiaryTask = SmartDiary.Web.Models.TodoTask;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 
 namespace SmartDiary.Web.Data
 {
-    public class ApplicationDbContext : DbContext
-    {
+	public class ApplicationDbContext : IdentityDbContext<User>
+	{
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
             : base(options)
         {
@@ -30,8 +32,8 @@ namespace SmartDiary.Web.Data
                 .IsUnique();
 
             modelBuilder.Entity<User>()
-                .HasIndex(u => u.Username)
-                .IsUnique();
+				.HasIndex(u => u.UserName)
+				.IsUnique();
 
             modelBuilder.Entity<Tag>()
                 .HasIndex(t => new { t.Name, t.OwnerId })
